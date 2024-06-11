@@ -193,27 +193,34 @@ public class ReflectionUtils
 		return entity.hasStatusEffect(cast(effect));
 	}
 	
-	public static <E> Registry<E> getDynamicRegistry(RegistryWorldView w, RegistryKey<? extends Registry<? extends E>> key) throws Throwable
+	public static <E> Registry<E> getDynamicRegistry(RegistryWorldView w, RegistryKey<? extends Registry<? extends E>> key)
 	{
 		if (GET_REGISTRY_MANAGER != null && GET_DYNAMIC_REGISTRY != null)
 		{
-			final DynamicRegistryManager m;
-			if (VersionUtils.MINOR < 19 || (VersionUtils.MINOR == 19 && VersionUtils.PATCH <= 2))
+			try
 			{
-				m = (DynamicRegistryManager) GET_REGISTRY_MANAGER.invokeExact(w);
+				final DynamicRegistryManager m;
+				if (VersionUtils.MINOR < 19 || (VersionUtils.MINOR == 19 && VersionUtils.PATCH <= 2))
+				{
+					m = (DynamicRegistryManager) GET_REGISTRY_MANAGER.invokeExact(w);
+				}
+				else
+				{
+					m = (DynamicRegistryManager) GET_REGISTRY_MANAGER.invokeExact((WorldView) w);
+				}
+				
+				return VersionUtils.MINOR == 16 ? (MutableRegistry<E>) GET_DYNAMIC_REGISTRY.invokeExact(m, key) : (Registry<E>) GET_DYNAMIC_REGISTRY.invokeExact(m, key);
 			}
-			else
+			catch (Throwable e)
 			{
-				m = (DynamicRegistryManager) GET_REGISTRY_MANAGER.invokeExact((WorldView) w);
+				throw new RuntimeException(e);
 			}
-			
-			return VersionUtils.MINOR == 16 ? (MutableRegistry<E>) GET_DYNAMIC_REGISTRY.invokeExact(m, key) : (Registry<E>) GET_DYNAMIC_REGISTRY.invokeExact(m, key);
 		}
 		
 		return null;
 	}
 	
-	public static String getBiomeId(Entity entity) throws Throwable
+	public static String getBiomeId(Entity entity)
 	{
 		if (GET_BIOME != null)
 		{
@@ -221,49 +228,91 @@ public class ReflectionUtils
 			final Vec3d pos = entity.getPos();
 			final BlockPos blockPos = new BlockPos(MathHelper.floor(pos.getX()), MathHelper.floor(pos.getY()), MathHelper.floor(pos.getZ()));
 			
-			if (VersionUtils.MINOR > 18 || (VersionUtils.MINOR == 18 && VersionUtils.PATCH >= 2))
+			try
 			{
-				return ((RegistryEntry<Biome>) GET_BIOME.invokeExact((WorldView) world, blockPos)).getKey().map(RegistryKey::getValue).map(Identifier::toString).orElse(null);
+				if (VersionUtils.MINOR > 18 || (VersionUtils.MINOR == 18 && VersionUtils.PATCH >= 2))
+				{
+					return ((RegistryEntry<Biome>) GET_BIOME.invokeExact((WorldView) world, blockPos)).getKey().map(RegistryKey::getValue).map(Identifier::toString).orElse(null);
+				}
+				
+				final Biome biome = (Biome) GET_BIOME.invokeExact((WorldView) world, blockPos);
+				return getId(getDynamicRegistry(world, BIOME_KEY), biome).toString();
 			}
-			
-			final Biome biome = (Biome) GET_BIOME.invokeExact((WorldView) world, blockPos);
-			return getId(getDynamicRegistry(world, BIOME_KEY), biome).toString();
+			catch (Throwable e)
+			{
+				throw new RuntimeException(e);
+			}
 		}
 		
 		return null;
 	}
 	
-	public static Set<Identifier> getIds(Registry<?> registry) throws Throwable
+	public static Set<Identifier> getIds(Registry<?> registry)
 	{
-		return (Set<Identifier>) GET_IDS.invoke(registry);
+		try
+		{
+			return (Set<Identifier>) GET_IDS.invoke(registry);
+		}
+		catch (Throwable e)
+		{
+			throw new RuntimeException(e);
+		}
 	}
 	
-	public static <V> Identifier getId(Registry<V> registry, V entry) throws Throwable
+	public static <V> Identifier getId(Registry<V> registry, V entry)
 	{
-		return (Identifier) GET_ID.invoke(registry, entry);
+		try
+		{
+			return (Identifier) GET_ID.invoke(registry, entry);
+		}
+		catch (Throwable e)
+		{
+			throw new RuntimeException(e);
+		}
 	}
 	
-	public static void setFogDensity(float f) throws Throwable
+	public static void setFogDensity(float f)
 	{
 		if (FOG_DENSITY != null)
 		{
-			FOG_DENSITY.invokeExact(f);
+			try
+			{
+				FOG_DENSITY.invokeExact(f);
+			}
+			catch (Throwable e)
+			{
+				throw new RuntimeException(e);
+			}
 		}
 	}
 	
-	public static void setFogStart(float f) throws Throwable
+	public static void setFogStart(float f)
 	{
 		if (FOG_START != null)
 		{
-			FOG_START.invokeExact(f);
+			try
+			{
+				FOG_START.invokeExact(f);
+			}
+			catch (Throwable e)
+			{
+				throw new RuntimeException(e);
+			}
 		}
 	}
 	
-	public static void setFogEnd(float f) throws Throwable
+	public static void setFogEnd(float f)
 	{
 		if (FOG_END != null)
 		{
-			FOG_END.invokeExact(f);
+			try
+			{
+				FOG_END.invokeExact(f);
+			}
+			catch (Throwable e)
+			{
+				throw new RuntimeException(e);
+			}
 		}
 	}
 	
