@@ -12,7 +12,6 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.render.BackgroundRenderer;
-import net.minecraft.client.render.BackgroundRenderer.FogType;
 import net.minecraft.client.render.Camera;
 // import net.minecraft.client.render.CameraSubmersionType;
 import net.minecraft.client.render.BackgroundRenderer.FogType;
@@ -87,7 +86,7 @@ public abstract class BackgroundRendererMixin
 		{
 			type = FogToggleType.THICK;
 		}
-		else if (fogType == FogType.FOG_SKY)
+		else if (fogType == BackgroundRenderer.FogType.FOG_SKY)
 		{
 			type = FogToggleType.SKY;
 		}
