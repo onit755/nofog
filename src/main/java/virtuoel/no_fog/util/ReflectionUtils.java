@@ -103,27 +103,48 @@ public class ReflectionUtils
 		return registry.getId(entry);
 	}
 	
-	public static void setFogDensity(float f) throws Throwable
+	public static void setFogDensity(float f)
 	{
 		if (FOG_DENSITY != null)
 		{
-			FOG_DENSITY.invokeExact(f);
+			try
+			{
+				FOG_DENSITY.invokeExact(f);
+			}
+			catch (Throwable e)
+			{
+				throw new RuntimeException(e);
+			}
 		}
 	}
 	
-	public static void setFogStart(float f) throws Throwable
+	public static void setFogStart(float f)
 	{
 		if (FOG_START != null)
 		{
-			FOG_START.invokeExact(f);
+			try
+			{
+				FOG_START.invokeExact(f);
+			}
+			catch (Throwable e)
+			{
+				throw new RuntimeException(e);
+			}
 		}
 	}
 	
-	public static void setFogEnd(float f) throws Throwable
+	public static void setFogEnd(float f)
 	{
 		if (FOG_END != null)
 		{
-			FOG_END.invokeExact(f);
+			try
+			{
+				FOG_END.invokeExact(f);
+			}
+			catch (Throwable e)
+			{
+				throw new RuntimeException(e);
+			}
 		}
 	}
 	
