@@ -1,5 +1,6 @@
 package virtuoel.no_fog.mixin.client.compat117plus.compat1181minus;
 
+import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -11,19 +12,21 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.render.BackgroundRenderer;
+import net.minecraft.client.render.BackgroundRenderer.FogType;
 import net.minecraft.client.render.Camera;
 // import net.minecraft.client.render.CameraSubmersionType;
 import net.minecraft.client.render.BackgroundRenderer.FogType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffects;
 import virtuoel.no_fog.NoFogClient;
 import virtuoel.no_fog.util.FogToggleType;
+import virtuoel.no_fog.util.ReflectionUtils;
 
 @Mixin(BackgroundRenderer.class)
 public abstract class BackgroundRendererMixin
 {
 	/*
+	@Dynamic
 	@Inject(method = "setupFog", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", ordinal = 1, shift = Shift.AFTER, target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderFogEnd(F)V"))
 	private static void applyFogModifyWaterEnd(Camera camera, BackgroundRenderer.FogType fogType, float viewDistance, boolean thickFog, float tickDelta, CallbackInfo info, CameraSubmersionType cameraSubmersionType, Entity entity, float hook, float end)
 	{
@@ -35,6 +38,7 @@ public abstract class BackgroundRendererMixin
 		}
 	}
 	
+	@Dynamic
 	@Inject(method = "setupFog", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", ordinal = 2, shift = Shift.AFTER, target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderFogStart(F)V"))
 	private static void applyFogModifyStart(Camera camera, BackgroundRenderer.FogType fogType, float viewDistance, boolean thickFog, float tickDelta, CallbackInfo info, CameraSubmersionType cameraSubmersionType, Entity entity, float hook, float start)
 	{
@@ -46,6 +50,7 @@ public abstract class BackgroundRendererMixin
 		}
 	}
 	
+	@Dynamic
 	@Inject(method = "setupFog", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", ordinal = 2, shift = Shift.AFTER, target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderFogEnd(F)V"))
 	private static void applyFogModifyEnd(Camera camera, BackgroundRenderer.FogType fogType, float viewDistance, boolean thickFog, float tickDelta, CallbackInfo info, CameraSubmersionType cameraSubmersionType, Entity entity, float hook, float start, float end)
 	{
@@ -74,7 +79,7 @@ public abstract class BackgroundRendererMixin
 		{
 			type = FogToggleType.POWDER_SNOW;
 		}
-		else if (entity instanceof LivingEntity && ((LivingEntity) entity).hasStatusEffect(StatusEffects.BLINDNESS))
+		else if (entity instanceof LivingEntity && ReflectionUtils.hasStatusEffect((LivingEntity) entity, ReflectionUtils.BLINDNESS))
 		{
 			type = FogToggleType.BLINDNESS;
 		}
