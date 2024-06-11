@@ -36,9 +36,8 @@ public class NoFogClient
 	
 	public NoFogClient()
 	{
-		//Correctly tell FML we are a Client Side only Mod, and we are ignoring server side.     
-        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (a, b) -> true));
-
+		ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (remoteVersion, isServer) -> true));
+		
 		if (CONFIGS_LOADED)
 		{
 			AutoConfigUtils.initialize();
