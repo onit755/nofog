@@ -8,7 +8,7 @@
 	"text.no_fog.config.sky_fog": "启用天空迷雾",
 	"text.no_fog.config.terrain_fog": "启用地形迷雾",
 	"text.no_fog.config.thick_fog": "启用浓雾",
-	"text.no_fog.config.thick_fog.tooltip": "（比如Boss迷雾或下界迷雾）",
+	"text.no_fog.config.thick_fog.tooltip": "（比如Boss迷雾或下界迷雾",
 	"text.no_fog.config.water_fog": "启用水下迷雾",
 	"text.no_fog.config.lava_fog": "启用熔岩迷雾",
 	"text.no_fog.config.powder_snow_fog": "启用细雪迷雾",
