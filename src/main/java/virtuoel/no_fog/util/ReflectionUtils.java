@@ -15,6 +15,9 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.MappingResolver;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.MutableRegistry;
@@ -35,18 +38,19 @@ import virtuoel.no_fog.NoFogClient;
 public class ReflectionUtils
 {
 	public static final Class<?> LITERAL_TEXT;
-	public static final MethodHandle FOG_DENSITY, FOG_START, FOG_END, GET_REGISTRY_MANAGER, GET_DYNAMIC_REGISTRY, GET_BIOME, GET_IDS, GET_ID;
+	public static final MethodHandle FOG_DENSITY, FOG_START, FOG_END, GET_REGISTRY_MANAGER, GET_DYNAMIC_REGISTRY, GET_BIOME, GET_IDS, GET_ID, HAS_STATUS_EFFECT;
 	public static final RegistryKey<Registry<Fluid>> FLUID_KEY;
 	public static final RegistryKey<Registry<Biome>> BIOME_KEY;
 	public static final RegistryKey<Registry<DimensionType>> DIMENSION_TYPE_KEY;
 	public static final Registry<Biome> BUILTIN_BIOME_REGISTRY;
+	public static final Object BLINDNESS, DARKNESS;
 	
 	static
 	{
 		final MappingResolver mappingResolver = FabricLoader.getInstance().getMappingResolver();
 		final Int2ObjectMap<MethodHandle> h = new Int2ObjectArrayMap<MethodHandle>();
 		final Int2ObjectMap<Class<?>> c = new Int2ObjectArrayMap<Class<?>>();
-		Object kF, kB, rB, kD = kB = rB = kF = null;
+		Object kF, kB, rB, kD, eB, eD = eB = kD = kB = rB = kF = null;
 		
 		final Lookup lookup = MethodHandles.lookup();
 		String mapped = "unset";
@@ -59,7 +63,9 @@ public class ReflectionUtils
 			final boolean is116 = VersionUtils.MINOR == 16;
 			final boolean is118Minus = VersionUtils.MINOR <= 18;
 			final boolean is1182Plus = VersionUtils.MINOR > 18 || (VersionUtils.MINOR == 18 && VersionUtils.PATCH >= 2);
+			final boolean is119Plus = VersionUtils.MINOR >= 19;
 			final boolean is1192Minus = VersionUtils.MINOR < 19 || (VersionUtils.MINOR == 19 && VersionUtils.PATCH <= 2);
+			final boolean is1204Minus = VersionUtils.MINOR < 20 || (VersionUtils.MINOR == 20 && VersionUtils.PATCH <= 4);
 			
 			if (is118Minus)
 			{
@@ -120,10 +126,25 @@ public class ReflectionUtils
 				mapped = mappingResolver.mapClassName("intermediary", "net.minecraft.class_5458");
 				clazz = Class.forName(mapped);
 				
-				mapped = mappingResolver.mapFieldName("intermediary", "net.minecraft.class_5458", "field_25933", "Lnet/minecraft/2378;");
+				mapped = mappingResolver.mapFieldName("intermediary", "net.minecraft.class_5458", "field_25933", "Lnet/minecraft/class_2378;");
 				f = clazz.getField(mapped);
 				rB = f.get(null);
 			}
+			
+			mapped = mappingResolver.mapFieldName("intermediary", "net.minecraft.class_1294", "field_5919", is1204Minus ? "Lnet/minecraft/class_1291;" : "Lnet/minecraft/class_6880;");
+			f = StatusEffects.class.getField(mapped);
+			eB = f.get(null);
+			
+			if (is119Plus)
+			{
+				mapped = mappingResolver.mapFieldName("intermediary", "net.minecraft.class_1294", "field_38092", is1204Minus ? "Lnet/minecraft/class_1291;" : "Lnet/minecraft/class_6880;");
+				f = StatusEffects.class.getField(mapped);
+				eD = f.get(null);
+			}
+			
+			mapped = mappingResolver.mapMethodName("intermediary", "net.minecraft.class_1309", "method_6059", is1204Minus ? "(Lnet/minecraft/class_1291;)Z" : "(Lnet/minecraft/class_6880;)Z");
+			m = LivingEntity.class.getMethod(mapped, is1204Minus ? StatusEffect.class : RegistryEntry.class);
+			h.put(8, lookup.unreflect(m));
 		}
 		catch (NoSuchMethodException | SecurityException | ClassNotFoundException | IllegalAccessException | NoSuchFieldException e1)
 		{
@@ -140,22 +161,36 @@ public class ReflectionUtils
 		GET_IDS = h.get(6);
 		GET_ID = h.get(7);
 		LITERAL_TEXT = c.get(0);
-		FLUID_KEY = castRegistryKey(kF);
-		BIOME_KEY = castRegistryKey(kB);
-		DIMENSION_TYPE_KEY = castRegistryKey(kD);
-		BUILTIN_BIOME_REGISTRY = castRegistry(rB);
+		FLUID_KEY = cast(kF);
+		BIOME_KEY = cast(kB);
+		DIMENSION_TYPE_KEY = cast(kD);
+		BUILTIN_BIOME_REGISTRY = cast(rB);
+		BLINDNESS = eB;
+		DARKNESS = eD;
+		HAS_STATUS_EFFECT = h.get(8);
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static <T> Registry<T> castRegistry(Object obj)
+	private static <T> T cast(Object obj)
 	{
-		return (Registry<T>) obj;
+		return (T) obj;
 	}
 	
-	@SuppressWarnings("unchecked")
-	private static <T> RegistryKey<T> castRegistryKey(Object obj)
+	public static boolean hasStatusEffect(LivingEntity entity, Object effect)
 	{
-		return (RegistryKey<T>) obj;
+		if (VersionUtils.MINOR < 20 || (VersionUtils.MINOR == 20 && VersionUtils.PATCH <= 4))
+		{
+			try
+			{
+				return (boolean) HAS_STATUS_EFFECT.invoke(entity, (StatusEffect) effect);
+			}
+			catch (Throwable e)
+			{
+				throw new RuntimeException(e);
+			}
+		}
+		
+		return entity.hasStatusEffect(cast(effect));
 	}
 	
 	public static <E> Registry<E> getDynamicRegistry(RegistryWorldView w, RegistryKey<? extends Registry<? extends E>> key) throws Throwable

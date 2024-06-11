@@ -1,5 +1,6 @@
 package virtuoel.no_fog.mixin.client.compat1182;
 
+import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,14 +16,15 @@ import net.minecraft.client.render.CameraSubmersionType;
 import net.minecraft.client.render.FogShape;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffects;
 import virtuoel.no_fog.NoFogClient;
 import virtuoel.no_fog.util.FogToggleType;
+import virtuoel.no_fog.util.ReflectionUtils;
 
 @Mixin(value = BackgroundRenderer.class, priority = 910)
 public abstract class BackgroundRendererMixin
 {
-	@Inject(method = "method_3211", locals = LocalCapture.CAPTURE_FAILHARD, at = @At("RETURN"), remap = false)
+	@Dynamic
+	@Inject(method = "method_3211", locals = LocalCapture.CAPTURE_FAILHARD, at = @At("RETURN"))
 	private static void applyFogModifyDistance(Camera camera, BackgroundRenderer.FogType fogType, float viewDistance, boolean thickFog, CallbackInfo info, CameraSubmersionType cameraSubmersionType, Entity entity, FogShape fogShape, float start, float end)
 	{
 		final float modifiedStart = getFogDistance(fogType, viewDistance, thickFog, cameraSubmersionType, entity, start, true);
@@ -52,7 +54,7 @@ public abstract class BackgroundRendererMixin
 		{
 			type = FogToggleType.POWDER_SNOW;
 		}
-		else if (entity instanceof LivingEntity && ((LivingEntity) entity).hasStatusEffect(StatusEffects.BLINDNESS))
+		else if (entity instanceof LivingEntity && ReflectionUtils.hasStatusEffect((LivingEntity) entity, ReflectionUtils.BLINDNESS))
 		{
 			type = FogToggleType.BLINDNESS;
 		}

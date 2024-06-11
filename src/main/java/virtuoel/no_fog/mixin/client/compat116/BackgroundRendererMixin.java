@@ -1,5 +1,6 @@
 package virtuoel.no_fog.mixin.client.compat116;
 
+import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -13,7 +14,6 @@ import net.minecraft.client.render.BackgroundRenderer.FogType;
 import net.minecraft.client.render.Camera;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.fluid.FluidState;
 import virtuoel.no_fog.NoFogClient;
 import virtuoel.no_fog.util.FogToggleType;
@@ -23,7 +23,8 @@ import virtuoel.no_fog.util.TagCompatibility;
 @Mixin(BackgroundRenderer.class)
 public abstract class BackgroundRendererMixin
 {
-	@Inject(method = "method_3211", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", shift = Shift.AFTER, target = "Lcom/mojang/blaze3d/systems/RenderSystem;fogDensity(F)V", remap = false), remap = false)
+	@Dynamic
+	@Inject(method = "method_3211", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", shift = Shift.AFTER, target = "Lcom/mojang/blaze3d/systems/RenderSystem;fogDensity(F)V", remap = false))
 	private static void applyFogModifyDensity(Camera camera, BackgroundRenderer.FogType fogType, float viewDistance, boolean thickFog, CallbackInfo info, FluidState fluidState, Entity entity, float density) throws Throwable
 	{
 		if (
@@ -35,7 +36,8 @@ public abstract class BackgroundRendererMixin
 		}
 	}
 	
-	@Inject(method = "method_3211", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", shift = Shift.AFTER, target = "Lcom/mojang/blaze3d/systems/RenderSystem;fogStart(F)V", remap = false), remap = false)
+	@Dynamic
+	@Inject(method = "method_3211", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", shift = Shift.AFTER, target = "Lcom/mojang/blaze3d/systems/RenderSystem;fogStart(F)V", remap = false))
 	private static void applyFogModifyStart(Camera camera, BackgroundRenderer.FogType fogType, float viewDistance, boolean thickFog, CallbackInfo info, FluidState fluidState, Entity entity, float start) throws Throwable
 	{
 		final float modified = getFogDistance(fogType, viewDistance, thickFog, entity, start, true);
@@ -46,7 +48,8 @@ public abstract class BackgroundRendererMixin
 		}
 	}
 	
-	@Inject(method = "method_3211", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", shift = Shift.AFTER, target = "Lcom/mojang/blaze3d/systems/RenderSystem;fogEnd(F)V", remap = false), remap = false)
+	@Dynamic
+	@Inject(method = "method_3211", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", shift = Shift.AFTER, target = "Lcom/mojang/blaze3d/systems/RenderSystem;fogEnd(F)V", remap = false))
 	private static void applyFogModifyEnd(Camera camera, BackgroundRenderer.FogType fogType, float viewDistance, boolean thickFog, CallbackInfo info, FluidState fluidState, Entity entity, float start, float end) throws Throwable
 	{
 		final float modified = getFogDistance(fogType, viewDistance, thickFog, entity, end, false);
@@ -58,11 +61,11 @@ public abstract class BackgroundRendererMixin
 	}
 	
 	@Unique
-	private static float getFogDistance(BackgroundRenderer.FogType fogType, float viewDistance, boolean thickFog, Entity entity, float fogDistance, boolean start)
+	private static float getFogDistance(BackgroundRenderer.FogType fogType, float viewDistance, boolean thickFog, Entity entity, float fogDistance, boolean start) throws Throwable
 	{
 		final FogToggleType type;
 		
-		if (entity instanceof LivingEntity && ((LivingEntity) entity).hasStatusEffect(StatusEffects.BLINDNESS))
+		if (entity instanceof LivingEntity && ReflectionUtils.hasStatusEffect((LivingEntity) entity, ReflectionUtils.BLINDNESS))
 		{
 			type = FogToggleType.BLINDNESS;
 		}
