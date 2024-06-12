@@ -14,9 +14,9 @@ import net.minecraft.client.render.CameraSubmersionType;
 import net.minecraft.client.render.FogShape;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffects;
 import virtuoel.no_fog.NoFogClient;
 import virtuoel.no_fog.util.FogToggleType;
+import virtuoel.no_fog.util.ReflectionUtils;
 
 @Mixin(value = BackgroundRenderer.class, priority = 910)
 public abstract class BackgroundRendererMixin
@@ -48,12 +48,12 @@ public abstract class BackgroundRendererMixin
 			return FogToggleType.POWDER_SNOW;
 		}
 		
-		if (entity instanceof LivingEntity && ((LivingEntity) entity).hasStatusEffect(StatusEffects.BLINDNESS))
+		if (entity instanceof LivingEntity && ReflectionUtils.hasStatusEffect((LivingEntity) entity, ReflectionUtils.BLINDNESS))
 		{
 			return FogToggleType.BLINDNESS;
 		}
 		
-		if (entity instanceof LivingEntity && ((LivingEntity) entity).hasStatusEffect(StatusEffects.DARKNESS))
+		if (entity instanceof LivingEntity && ReflectionUtils.hasStatusEffect((LivingEntity) entity, ReflectionUtils.DARKNESS))
 		{
 			return FogToggleType.DARKNESS;
 		}

@@ -7,7 +7,10 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
+import net.neoforged.fml.IExtensionPoint;
+import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.network.NetworkConstants;
 import virtuoel.no_fog.api.NoFogConfig;
 import virtuoel.no_fog.util.AutoConfigUtils;
 import virtuoel.no_fog.util.DummyNoFogConfig;
@@ -31,6 +34,8 @@ public class NoFogClient
 	
 	public NoFogClient()
 	{
+		ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (remoteVersion, isServer) -> true));
+		
 		if (CONFIGS_LOADED)
 		{
 			AutoConfigUtils.initialize();
