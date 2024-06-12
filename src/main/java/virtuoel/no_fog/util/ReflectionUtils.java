@@ -74,7 +74,7 @@ public class ReflectionUtils
 		DIMENSION_TYPE_KEY = Registry.DIMENSION_TYPE_KEY;
 		BUILTIN_BIOME_REGISTRY = BuiltinRegistries.BIOME;
 		BLINDNESS = StatusEffects.BLINDNESS;
-		DARKNESS = null; // TODO 1.19
+		DARKNESS = StatusEffects.DARKNESS;
 	}
 	
 	public static <E> Registry<E> getDynamicRegistry(RegistryWorldView w, RegistryKey<? extends Registry<E>> key)
