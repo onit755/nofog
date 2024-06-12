@@ -7,7 +7,10 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
+import net.minecraftforge.fml.IExtensionPoint;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.NetworkConstants;
 import virtuoel.no_fog.api.NoFogConfig;
 import virtuoel.no_fog.util.AutoConfigUtils;
 import virtuoel.no_fog.util.DummyNoFogConfig;
@@ -31,6 +34,8 @@ public class NoFogClient
 	
 	public NoFogClient()
 	{
+		ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (remoteVersion, isServer) -> true));
+		
 		if (CONFIGS_LOADED)
 		{
 			AutoConfigUtils.initialize();
@@ -49,7 +54,7 @@ public class NoFogClient
 	
 	public static boolean isToggleEnabled(FogToggleType type, Entity entity)
 	{
-		final String dimension = entity.world.getRegistryKey().getValue().toString();
+		final String dimension = entity.getEntityWorld().getRegistryKey().getValue().toString();
 		
 		final NoFogConfig config = NoFogClient.CONFIG.get();
 		final FogToggles globalToggles = config.getGlobalToggles();
