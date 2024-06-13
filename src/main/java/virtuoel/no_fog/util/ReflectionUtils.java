@@ -25,6 +25,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.InvalidIdentifierException;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -38,7 +39,7 @@ import virtuoel.no_fog.NoFogClient;
 public class ReflectionUtils
 {
 	public static final Class<?> LITERAL_TEXT;
-	public static final MethodHandle FOG_DENSITY, FOG_START, FOG_END, GET_REGISTRY_MANAGER, GET_DYNAMIC_REGISTRY, GET_BIOME, GET_IDS, GET_ID, HAS_STATUS_EFFECT;
+	public static final MethodHandle FOG_DENSITY, FOG_START, FOG_END, GET_REGISTRY_MANAGER, GET_DYNAMIC_REGISTRY, GET_BIOME, GET_IDS, GET_ID, HAS_STATUS_EFFECT, CONSTRUCT_ID_FROM_STRING, CONSTRUCT_ID_FROM_STRINGS;
 	public static final RegistryKey<Registry<Fluid>> FLUID_KEY;
 	public static final RegistryKey<Registry<Biome>> BIOME_KEY;
 	public static final RegistryKey<Registry<DimensionType>> DIMENSION_TYPE_KEY;
@@ -66,6 +67,7 @@ public class ReflectionUtils
 			final boolean is119Plus = VersionUtils.MINOR >= 19;
 			final boolean is1192Minus = VersionUtils.MINOR < 19 || (VersionUtils.MINOR == 19 && VersionUtils.PATCH <= 2);
 			final boolean is1204Minus = VersionUtils.MINOR < 20 || (VersionUtils.MINOR == 20 && VersionUtils.PATCH <= 4);
+			final boolean is1206Minus = VersionUtils.MINOR < 20 || (VersionUtils.MINOR == 20 && VersionUtils.PATCH <= 6);
 			
 			if (is118Minus)
 			{
@@ -145,6 +147,13 @@ public class ReflectionUtils
 			mapped = mappingResolver.mapMethodName("intermediary", "net.minecraft.class_1309", "method_6059", is1204Minus ? "(Lnet/minecraft/class_1291;)Z" : "(Lnet/minecraft/class_6880;)Z");
 			m = LivingEntity.class.getMethod(mapped, is1204Minus ? StatusEffect.class : RegistryEntry.class);
 			h.put(8, lookup.unreflect(m));
+			
+			if (is1206Minus)
+			{
+				h.put(9, lookup.unreflectConstructor(Identifier.class.getDeclaredConstructor(String.class)));
+				
+				h.put(10, lookup.unreflectConstructor(Identifier.class.getDeclaredConstructor(String.class, String.class)));
+			}
 		}
 		catch (NoSuchMethodException | SecurityException | ClassNotFoundException | IllegalAccessException | NoSuchFieldException e1)
 		{
@@ -168,12 +177,56 @@ public class ReflectionUtils
 		BLINDNESS = eB;
 		DARKNESS = eD;
 		HAS_STATUS_EFFECT = h.get(8);
+		CONSTRUCT_ID_FROM_STRING = h.get(9);
+		CONSTRUCT_ID_FROM_STRINGS = h.get(10);
 	}
 	
 	@SuppressWarnings("unchecked")
 	private static <T> T cast(Object obj)
 	{
 		return (T) obj;
+	}
+	
+	public static Identifier constructIdentifier(final String id)
+	{
+		if (CONSTRUCT_ID_FROM_STRING != null)
+		{
+			try
+			{
+				return (Identifier) CONSTRUCT_ID_FROM_STRING.invoke(id);
+			}
+			catch (final InvalidIdentifierException e)
+			{
+				throw e;
+			}
+			catch (final Throwable e)
+			{
+				throw new RuntimeException(e);
+			}
+		}
+		
+		return Identifier.of(id);
+	}
+	
+	public static Identifier constructIdentifier(final String namespace, final String path)
+	{
+		if (CONSTRUCT_ID_FROM_STRINGS != null)
+		{
+			try
+			{
+				return (Identifier) CONSTRUCT_ID_FROM_STRINGS.invoke(namespace, path);
+			}
+			catch (final InvalidIdentifierException e)
+			{
+				throw e;
+			}
+			catch (final Throwable e)
+			{
+				throw new RuntimeException(e);
+			}
+		}
+		
+		return Identifier.of(namespace, path);
 	}
 	
 	public static boolean hasStatusEffect(LivingEntity entity, Object effect)

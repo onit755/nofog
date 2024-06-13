@@ -40,7 +40,7 @@ public final class TagCompatibility
 	
 	private static Optional<Object> getVanillaFluidTag(final boolean water)
 	{
-		return Optional.of(getFluidTag(new Identifier("minecraft", water ? "water" : "lava")).orElseGet(() -> ReflectionUtils.getFieldValue(FLUID_TAGS, water ? FLUID_TAGS_WATER : FLUID_TAGS_LAVA, null, null)));
+		return Optional.of(getFluidTag(ReflectionUtils.constructIdentifier("minecraft", water ? "water" : "lava")).orElseGet(() -> ReflectionUtils.getFieldValue(FLUID_TAGS, water ? FLUID_TAGS_WATER : FLUID_TAGS_LAVA, null, null)));
 	}
 	
 	public static Optional<Object> getFluidTag(Identifier id)
