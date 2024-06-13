@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
-import net.neoforged.neoforge.internal.versions.neoform.NeoFormVersion;
+import net.neoforged.fml.loading.FMLLoader;
 
 public class VersionUtils
 {
@@ -80,7 +80,7 @@ public class VersionUtils
 		return true;
 	}
 	
-	public static final ArtifactVersion MINECRAFT_VERSION = new DefaultArtifactVersion(NeoFormVersion.getMCVersion());
+	public static final ArtifactVersion MINECRAFT_VERSION = new DefaultArtifactVersion(FMLLoader.versionInfo().mcVersion());
 	public static final int MAJOR = MINECRAFT_VERSION.getMajorVersion();
 	public static final int MINOR = MINECRAFT_VERSION.getMinorVersion();
 	public static final int PATCH = MINECRAFT_VERSION.getIncrementalVersion();

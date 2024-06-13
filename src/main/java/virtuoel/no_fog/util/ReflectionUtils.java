@@ -20,6 +20,7 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -37,7 +38,7 @@ public class ReflectionUtils
 	public static final RegistryKey<Registry<Biome>> BIOME_KEY;
 	public static final RegistryKey<Registry<DimensionType>> DIMENSION_TYPE_KEY;
 	public static final Registry<Biome> BUILTIN_BIOME_REGISTRY;
-	public static final StatusEffect BLINDNESS, DARKNESS;
+	public static final RegistryEntry<StatusEffect> BLINDNESS, DARKNESS;
 	
 	static
 	{
@@ -93,7 +94,7 @@ public class ReflectionUtils
 		return getId(getDynamicRegistry(world, BIOME_KEY), biome).toString();
 	}
 	
-	public static boolean hasStatusEffect(LivingEntity entity, StatusEffect effect)
+	public static boolean hasStatusEffect(LivingEntity entity, RegistryEntry<StatusEffect> effect)
 	{
 		return entity.hasStatusEffect(effect);
 	}

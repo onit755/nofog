@@ -26,7 +26,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.neoforged.fml.ModLoadingContext;
-import net.neoforged.neoforge.client.ConfigScreenHandler;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import virtuoel.no_fog.api.NoFogConfig;
 
 public class AutoConfigUtils
@@ -40,8 +40,8 @@ public class AutoConfigUtils
 		registry.registerPredicateProvider(AutoConfigUtils::biomeToggleMapEntries, f -> f.getName().equals("biomeToggles"));
 		
 		ModLoadingContext.get().registerExtensionPoint(
-			ConfigScreenHandler.ConfigScreenFactory.class,
-			() -> new ConfigScreenHandler.ConfigScreenFactory((mc, screen) -> AutoConfig.getConfigScreen(NoFogConfigImpl.class, screen).get())
+			IConfigScreenFactory.class,
+			() -> (mc, screen) -> AutoConfig.getConfigScreen(NoFogConfigImpl.class, screen).get()
 		);
 	}
 	
