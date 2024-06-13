@@ -131,7 +131,7 @@ dependencies {
 				mappings "net.fabricmc:yarn:${mapping}:v2"
 			}
 			if(project.hasProperty("neoforge_version") && (minor > 20 || (minor == 20 && patch >= 5))) {
-				mappings "dev.architectury:yarn-mappings-patch-neoforge:1.20.5+build.3"
+				mappings(rootProject.rootDir.toPath().resolve("yarn_mappings_patch_neoforge_${minecraft_version}.tiny").toFile())
 			}
 		}
 	}
