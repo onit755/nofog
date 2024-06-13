@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.spongepowered.asm.logging.Level;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -31,7 +33,7 @@ public class ConfigUtils
 		}
 		catch (Throwable e)
 		{
-			NoFogClient.LOGGER.catching(e);
+			NoFogClient.LOGGER.catching(Level.WARN, e);
 		}
 		
 		if (ids.isEmpty())
@@ -58,7 +60,7 @@ public class ConfigUtils
 			}
 			catch (Throwable e)
 			{
-				NoFogClient.LOGGER.catching(e);
+				NoFogClient.LOGGER.catching(Level.WARN, e);
 			}
 		}
 		
@@ -87,7 +89,7 @@ public class ConfigUtils
 		}
 		catch (Throwable e)
 		{
-			NoFogClient.LOGGER.catching(e);
+			NoFogClient.LOGGER.catching(Level.WARN, e);
 		}
 		
 		if (ids.isEmpty())
@@ -112,7 +114,7 @@ public class ConfigUtils
 			}
 			catch (Throwable e)
 			{
-				NoFogClient.LOGGER.catching(e);
+				NoFogClient.LOGGER.catching(Level.WARN, e);
 			}
 		}
 		
