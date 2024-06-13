@@ -2,8 +2,8 @@ package virtuoel.no_fog;
 
 import java.util.function.Supplier;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.spongepowered.asm.logging.ILogger;
+import org.spongepowered.asm.service.MixinService;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.entity.Entity;
@@ -21,7 +21,7 @@ public class NoFogClient implements ClientModInitializer
 {
 	public static final String MOD_ID = "no_fog";
 	
-	public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
+	public static final ILogger LOGGER = MixinService.getService().getLogger(MOD_ID);
 	
 	public static final boolean CONFIGS_LOADED = ModLoaderUtils.isModLoaded("cloth_config") || ModLoaderUtils.isModLoaded("cloth-config") || ModLoaderUtils.isModLoaded("cloth-config2");
 	
