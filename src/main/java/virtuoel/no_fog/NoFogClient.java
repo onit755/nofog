@@ -25,9 +25,7 @@ public class NoFogClient implements ClientModInitializer
 	
 	public static final boolean CONFIGS_LOADED = ModLoaderUtils.isModLoaded("cloth_config") || ModLoaderUtils.isModLoaded("cloth-config") || ModLoaderUtils.isModLoaded("cloth-config2");
 	
-	private static final NoFogConfig FALLBACK = new DummyNoFogConfig();
-	
-	public static final Supplier<NoFogConfig> CONFIG = !CONFIGS_LOADED ? () -> FALLBACK : AutoConfigUtils.CONFIG;
+	public static final Supplier<NoFogConfig> CONFIG = !CONFIGS_LOADED ? () -> DummyNoFogConfig.INSTANCE : AutoConfigUtils.CONFIG;
 	
 	public NoFogClient()
 	{
