@@ -7,6 +7,8 @@ import virtuoel.no_fog.api.NoFogConfig;
 
 public class DummyNoFogConfig implements NoFogConfig
 {
+	public static final NoFogConfig INSTANCE = new DummyNoFogConfig();
+	
 	public FogToggles globalToggles = new FogToggles();
 	public Map<String, FogToggles> dimensionToggles = ConfigUtils.populateDimensionToggles(new LinkedHashMap<>());
 	public Map<String, FogToggles> biomeToggles = ConfigUtils.populateBiomeToggles(new LinkedHashMap<>());
