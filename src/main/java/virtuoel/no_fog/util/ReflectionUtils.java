@@ -86,6 +86,16 @@ public class ReflectionUtils
 		return w.getRegistryManager().get(key);
 	}
 	
+	public static Identifier constructIdentifier(final String id)
+	{
+		return Identifier.of(id);
+	}
+	
+	public static Identifier constructIdentifier(final String namespace, final String path)
+	{
+		return Identifier.of(namespace, path);
+	}
+	
 	public static String getBiomeId(Entity entity)
 	{
 		final World world = entity.getEntityWorld();
