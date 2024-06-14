@@ -84,6 +84,16 @@ public class ReflectionUtils
 		return w.getRegistryManager().get(key);
 	}
 	
+	public static Identifier constructIdentifier(final String id)
+	{
+		return new Identifier(id);
+	}
+	
+	public static Identifier constructIdentifier(final String namespace, final String path)
+	{
+		return new Identifier(namespace, path);
+	}
+	
 	public static String getBiomeId(Entity entity)
 	{
 		final Vec3d pos = entity.getPos();
