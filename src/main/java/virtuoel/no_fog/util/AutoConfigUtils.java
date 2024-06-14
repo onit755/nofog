@@ -23,7 +23,6 @@ import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.gui.entries.EnumListEntry;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
@@ -109,7 +108,7 @@ public class AutoConfigUtils
 		final List<Triple<String, String, String>> idData = data.keySet()
 			.stream().map(i ->
 			{
-				final String key = Util.createTranslationKey("biome", new Identifier(i));
+				final String key = Util.createTranslationKey("biome", ReflectionUtils.constructIdentifier(i));
 				return Triple.of(i, key, I18n.translate(key));
 			})
 			.sorted((l, r) -> l.getRight().compareTo(r.getRight()))
