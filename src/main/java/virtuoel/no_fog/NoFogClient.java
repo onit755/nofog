@@ -68,6 +68,6 @@ public class NoFogClient
 	
 	public static Identifier id(String name)
 	{
-		return new Identifier(MOD_ID, name);
+		return ReflectionUtils.constructIdentifier(MOD_ID, name);
 	}
 }
